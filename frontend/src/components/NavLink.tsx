@@ -1,0 +1,26 @@
+import { Link, useLocation } from "react-router-dom"
+import { cn } from "@/utils/index"
+
+interface NavLinkProps {
+  to: string
+  children: React.ReactNode
+  className?: string
+  activeClassName?: string
+  end?: boolean
+}
+
+export function NavLink({ to, children, className, activeClassName, end }: NavLinkProps) {
+  const location = useLocation()
+  const isActive = end 
+    ? location.pathname === to 
+    : location.pathname.startsWith(to)
+
+  return (
+    <Link
+      to={to}
+      className={cn(className, isActive && activeClassName)}
+    >
+      {children}
+    </Link>
+  )
+}

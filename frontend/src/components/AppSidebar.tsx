@@ -1,0 +1,88 @@
+import { LayoutDashboard, ArrowLeftRight, CreditCard, CalendarClock, LogOut, PieChart, Target, Sun, Moon, BarChart3 } from "lucide-react";
+import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+
+const navItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "Transactions", url: "/transactions", icon: ArrowLeftRight },
+  { title: "Cards", url: "/cards", icon: CreditCard },
+  { title: "Dues", url: "/dues", icon: CalendarClock },
+  { title: "Budgets", url: "/budgets", icon: PieChart },
+  { title: "Goals", url: "/goals", icon: Target },
+];
+
+export function AppSidebar() {
+  const { signOut } = useAuth();
+  const [theme, setTheme] = useState<'dark' | 'light'>(
+    (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
+  );
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
+  return (
+    <Sidebar className="border-r border-white/5">
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-lg font-bold px-4 py-3 flex items-center gap-2">
+            <img src="/fintrack-logo.svg" alt="FinTrack" className="h-8 w-8 object-contain" />
+            FinTrack
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={item.url}
+                      end={item.url === "/"}
+                      className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-sidebar-accent"
+                      activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="p-4 space-y-2">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start gap-3 rounded-xl hover:bg-sidebar-accent" 
+          onClick={toggleTheme}
+        >
+          {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </Button>
+        <Button variant="ghost" className="w-full justify-start gap-3 rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10" onClick={signOut}>
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </Button>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}

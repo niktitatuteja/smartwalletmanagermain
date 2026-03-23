@@ -1,0 +1,20 @@
+{
+  "short_name": "FinTrack",
+  "name": "FinTrack - Personal Finance Manager",
+  "icons": [
+    {
+      "src": "fintrack-logo.svg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "fintrack-logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#0f172a"
+}
