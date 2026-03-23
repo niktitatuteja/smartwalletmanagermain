@@ -44,9 +44,11 @@ export function AppSidebar() {
     <Sidebar className="border-r border-white/5">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-lg font-bold px-4 py-3 flex items-center gap-2">
-            <img src="/fintrack-logo.svg" alt="FinTrack" className="h-8 w-8 object-contain" />
-            FinTrack
+          <SidebarGroupLabel className="text-lg font-bold px-4 py-3">
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <img src="/logo.png" alt="logo" style={{ width: "30px", height: "30px" }} />
+              <span>FinTrack</span>
+            </div>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
