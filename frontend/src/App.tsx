@@ -13,6 +13,7 @@ import BudgetsPage from "@/pages/Budgets";
 import GoalsPage from "@/pages/Goals";
 import Analytics from "@/pages/Analytics";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/login" element={<Login />} />
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/analytics" element={<Analytics />} />

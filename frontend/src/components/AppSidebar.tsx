@@ -2,6 +2,7 @@ import { LayoutDashboard, ArrowLeftRight, CreditCard, CalendarClock, LogOut, Pie
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +24,7 @@ const navItems = [
   { title: "Dues", url: "/dues", icon: CalendarClock },
   { title: "Budgets", url: "/budgets", icon: PieChart },
   { title: "Goals", url: "/goals", icon: Target },
+  { title: "Login", url: "/login", icon: LogOut },
 ];
 
 export function AppSidebar() {
