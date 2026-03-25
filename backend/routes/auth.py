@@ -80,7 +80,7 @@ def verify_otp():
     if not user:
         return jsonify({"success": False, "error": "User not found"}), 404
 
-    if user.otp != data['otp']:
+    if not user.otp or user.otp != data['otp']:
         return jsonify({"success": False, "error": "Invalid OTP"}), 400
 
     if not user.otp_expiry or user.otp_expiry < datetime.utcnow():
