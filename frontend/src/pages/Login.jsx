@@ -7,43 +7,40 @@ export default function Login() {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
 
-  // Step 1: Login → send OTP
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/auth/login", {
+      await axios.post("http://127.0.0.1:8000/api/auth/login", {
         email,
         password,
       });
-
-      alert(res.data.message);
+      alert("OTP sent to your email");
       setStep(2);
     } catch (err) {
-      alert(err.response?.data?.error || "Login failed");
+      alert("Login failed");
     }
   };
 
-  // Step 2: Verify OTP
-  const handleVerifyOtp = async () => {
+  const handleVerify = async () => {
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/auth/verify-otp",
-        { email, otp }
-      );
-
-      // Save token
-      localStorage.setItem("token", res.data.access_token);
+      const res = await axios.post("http://127.0.0.1:8000/api/auth/verify-otp", {
+        email,
+        otp,
+      });
 
       alert("Login successful");
 
-      // Redirect to dashboard
+      // ✅ Save token
+      localStorage.setItem("token", res.data.token);
+
+      // ✅ Redirect
       window.location.href = "/";
     } catch (err) {
-      alert(err.response?.data?.error || "OTP failed");
+      alert("Invalid OTP");
     }
   };
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div style={{ padding: "40px" }}>
       <h2>Login</h2>
 
       {step === 1 && (
@@ -52,15 +49,13 @@ export default function Login() {
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <br /><br />
-
+          <br />
           <input
             type="password"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <br /><br />
-
+          <br />
           <button onClick={handleLogin}>Login</button>
         </>
       )}
@@ -71,9 +66,8 @@ export default function Login() {
             placeholder="Enter OTP"
             onChange={(e) => setOtp(e.target.value)}
           />
-          <br /><br />
-
-          <button onClick={handleVerifyOtp}>Verify OTP</button>
+          <br />
+          <button onClick={handleVerify}>Verify OTP</button>
         </>
       )}
     </div>
