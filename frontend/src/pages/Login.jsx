@@ -13,9 +13,8 @@ export default function Login() {
         email,
         password,
       });
-      alert("OTP sent to your email");
       setStep(2);
-    } catch (err) {
+    } catch {
       alert("Login failed");
     }
   };
@@ -27,49 +26,62 @@ export default function Login() {
         otp,
       });
 
-      alert("Login successful");
-
-      // ✅ Save token
       localStorage.setItem("token", res.data.token);
-
-      // ✅ Redirect
       window.location.href = "/";
-    } catch (err) {
+    } catch {
       alert("Invalid OTP");
     }
   };
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h2>Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#020817] text-white">
+      
+      <div className="w-full max-w-md bg-[#0f172a] p-8 rounded-2xl shadow-lg border border-white/10">
+        
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-      {step === 1 && (
-        <>
-          <input
-            placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <br />
-          <input
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <br />
-          <button onClick={handleLogin}>Login</button>
-        </>
-      )}
+        {step === 1 && (
+          <>
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full p-3 mb-4 rounded-lg bg-[#020817] border border-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-      {step === 2 && (
-        <>
-          <input
-            placeholder="Enter OTP"
-            onChange={(e) => setOtp(e.target.value)}
-          />
-          <br />
-          <button onClick={handleVerify}>Verify OTP</button>
-        </>
-      )}
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full p-3 mb-4 rounded-lg bg-[#020817] border border-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <button
+              onClick={handleLogin}
+              className="w-full p-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition"
+            >
+              Send OTP
+            </button>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <input
+              placeholder="Enter OTP"
+              className="w-full p-3 mb-4 rounded-lg bg-[#020817] border border-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              onChange={(e) => setOtp(e.target.value)}
+            />
+
+            <button
+              onClick={handleVerify}
+              className="w-full p-3 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition"
+            >
+              Verify & Login
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
