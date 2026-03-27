@@ -10,7 +10,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     otp = db.Column(db.String(6), nullable=True)
-otp_expiry = db.Column(db.DateTime, nullable=True)
+    otp_expiry = db.Column(db.DateTime, nullable=True)
 
     # Relationships
     cards = db.relationship('Card', backref='user', lazy=True, cascade="all, delete-orphan")
