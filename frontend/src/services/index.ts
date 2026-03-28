@@ -11,6 +11,7 @@ export interface ApiResponse<T = any> {
 
 export const authService = {
   login: (data: any) => api.post<ApiResponse>('/auth/login', data) as unknown as Promise<ApiResponse>,
+  verifyOtp: (data: any) => api.post<ApiResponse>('/auth/verify-otp', data) as unknown as Promise<ApiResponse>,
   register: (data: any) => api.post<ApiResponse>('/auth/register', data) as unknown as Promise<ApiResponse>,
   getMe: () => api.get<ApiResponse>('/auth/me') as unknown as Promise<ApiResponse>,
 };
@@ -52,5 +53,9 @@ export const dueService = {
   create: (data: any) => api.post<ApiResponse>('/dues/', data) as unknown as Promise<ApiResponse>,
   update: (id: number, data: any) => api.put<ApiResponse>(`/dues/${id}`, data) as unknown as Promise<ApiResponse>,
   delete: (id: number) => api.delete<ApiResponse>(`/dues/${id}`) as unknown as Promise<ApiResponse>,
+};
+
+export const sandboxService = {
+  processPayment: (data: any) => api.post<ApiResponse>('/sandbox/process-payment', data) as unknown as Promise<ApiResponse>,
 };
 

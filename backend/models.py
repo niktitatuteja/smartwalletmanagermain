@@ -7,10 +7,12 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     display_name = db.Column(db.String(100), nullable=True)
+    role = db.Column(db.String(20), default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    balance = db.Column(db.Float, nullable=False, default=10000.00)
 
     otp = db.Column(db.String(6), nullable=True)
-otp_expiry = db.Column(db.DateTime, nullable=True)
+    otp_expiry = db.Column(db.DateTime, nullable=True)
 
     # Relationships
     cards = db.relationship('Card', backref='user', lazy=True, cascade="all, delete-orphan")
@@ -30,6 +32,7 @@ otp_expiry = db.Column(db.DateTime, nullable=True)
             "id": self.id,
             "email": self.email,
             "display_name": self.display_name,
+            "role": self.role,
             "created_at": self.created_at.isoformat()
         }
 

@@ -13,6 +13,7 @@ import { Plus, Trash2, CalendarClock, AlertCircle, CheckCircle2 } from "lucide-r
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import PaymentSandboxModal from "@/components/PaymentSandboxModal";
 
 interface Due {
   id: number;
@@ -31,6 +32,10 @@ export default function Dues() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   
+  // Sandbox State
+  const [showSandbox, setShowSandbox] = useState(false);
+  const [pendingDue, setPendingDue] = useState<Due | null>(null);
+
   // Form state
   const [amount, setAmount] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -72,7 +77,7 @@ export default function Dues() {
     }
   };
 
-  const handleTogglePaid = async (due: Due) => {
+  const executeTogglePaid = async (due: Due) => {
     try {
       const res = await dueService.update(due.id, { is_paid: !due.is_paid });
       if (res.success) {
@@ -81,6 +86,22 @@ export default function Dues() {
       }
     } catch (err: any) {
       toast.error(err.message);
+    }
+  };
+
+  const handleTogglePaid = (due: Due) => {
+    if (!due.is_paid) {
+      setPendingDue(due);
+      setShowSandbox(true);
+    } else {
+      executeTogglePaid(due);
+    }
+  };
+
+  const handleSandboxSuccess = () => {
+    if (pendingDue) {
+      executeTogglePaid(pendingDue);
+      setPendingDue(null);
     }
   };
 
@@ -137,6 +158,14 @@ export default function Dues() {
           </DialogContent>
         </Dialog>
       </div>
+
+      <PaymentSandboxModal 
+        isOpen={showSandbox} 
+        onClose={() => setShowSandbox(false)} 
+        onSuccess={handleSandboxSuccess} 
+        amount={pendingDue?.amount || 0} 
+        title={`Card Due: ${cards.find(c => c.id === pendingDue?.card_id)?.nickname || 'Card'}`} 
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>

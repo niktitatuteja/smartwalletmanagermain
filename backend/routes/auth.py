@@ -8,99 +8,73 @@ from datetime import datetime, timedelta
 
 auth_bp = Blueprint('auth', __name__)
 
-# =========================
-# REGISTER (UNCHANGED)
-# =========================
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    if not data or not data.get('email') or not data.get('password'):
-        return jsonify({"success": False, "error": "Missing email or password"}), 400
-    
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({"success": False, "error": "Email already registered"}), 409
-    
-    new_user = User(
-        email=data['email'], 
-        display_name=data.get('display_name', data['email'].split('@')[0])
-    )
-    new_user.set_password(data['password'])
-    
+    email = data.get('email')
+    password = data.get('password')
+    display_name = data.get('display_name')
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email address already exists"}), 409
+
+    new_user = User(email=email, display_name=display_name)
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
-    
-    return jsonify({
-        "success": True,
-        "message": "User registered successfully"
-    }), 201
 
+    access_token = create_access_token(identity=new_user.id)
+    return jsonify(access_token=access_token, user=new_user.to_dict(), success=True), 201
 
-# =========================
-# LOGIN (UPDATED WITH OTP)
-# =========================
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    if not data or not data.get('email') or not data.get('password'):
-        return jsonify({"success": False, "error": "Missing email or password"}), 400
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.check_password(password):
+        # Generate OTP
+        otp = generate_otp()
+        user.otp = otp
+        user.otp_expiry = datetime.utcnow() + timedelta(minutes=10)
+        db.session.commit()
+
+        # Send OTP Email
+        try:
+            send_otp_email(user.email, otp)
+        except Exception as e:
+            print(f"Failed to send email: {e}")
+            print(f"OTP for {user.email} is: {otp}") # Print to console for development
+
+        return jsonify({"success": True, "message": "OTP sent to your email"})
     
-    user = User.query.filter_by(email=data['email']).first()
+    return jsonify({"error": "Invalid credentials"}), 401
 
-    if not user or not user.check_password(data['password']):
-        return jsonify({"success": False, "error": "Invalid email or password"}), 401
-
-    # ✅ Generate OTP
-    otp = generate_otp()
-    user.otp = otp
-    user.otp_expiry = datetime.utcnow() + timedelta(minutes=5)
-
-    db.session.commit()
-
-    # ✅ Send OTP Email
-    send_otp_email(user.email, otp)
-
-    return jsonify({
-        "success": True,
-        "message": "OTP sent to email"
-    }), 200
-
-
-# =========================
-# VERIFY OTP (NEW)
-# =========================
 @auth_bp.route('/verify-otp', methods=['POST'])
 def verify_otp():
     data = request.get_json()
+    email = data.get('email')
+    otp = data.get('otp')
 
-    if not data or not data.get('email') or not data.get('otp'):
-        return jsonify({"success": False, "error": "Missing email or OTP"}), 400
-
-    user = User.query.filter_by(email=data['email']).first()
+    user = User.query.filter_by(email=email).first()
 
     if not user:
-        return jsonify({"success": False, "error": "User not found"}), 404
+        return jsonify({"error": "User not found"}), 404
 
-    if not user.otp or user.otp != data['otp']:
-        return jsonify({"success": False, "error": "Invalid OTP"}), 400
+    print(f"DEBUG: Verifying OTP. Submitted: {otp}, Stored: {user.otp}, Expiry: {user.otp_expiry}, Now: {datetime.utcnow()}")
 
-    if not user.otp_expiry or user.otp_expiry < datetime.utcnow():
-        return jsonify({"success": False, "error": "OTP expired"}), 400
+    if user.otp and user.otp == str(otp) and user.otp_expiry > datetime.utcnow():
+        # Clear OTP after successful verification
+        user.otp = None
+        user.otp_expiry = None
+        db.session.commit()
 
-    # ✅ Generate JWT token
-    access_token = create_access_token(identity=str(user.id))
-
-    # ✅ Clear OTP after success
-    user.otp = None
-    user.otp_expiry = None
-    db.session.commit()
-
-    return jsonify({
-        "success": True,
-        "message": "Login successful",
-        "access_token": access_token,
-        "user": user.to_dict()
-    }), 200
-
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token, user=user.to_dict(), success=True)
+    
+    return jsonify({"error": "Invalid or expired OTP"}), 401
 
 # =========================
 # GET CURRENT USER (UNCHANGED)

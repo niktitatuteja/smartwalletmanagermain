@@ -11,6 +11,7 @@ from routes.budgets import budgets_bp
 from routes.goals import goals_bp
 from routes.ai import ai_bp
 from routes.analytics import analytics_bp
+from routes.sandbox import sandbox_bp
 
 def create_app(config_class=Config):
     # Set static folder to frontend build directory
@@ -33,6 +34,7 @@ def create_app(config_class=Config):
     app.register_blueprint(goals_bp, url_prefix='/api/goals')
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
     app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
+    app.register_blueprint(sandbox_bp, url_prefix='/api/sandbox')
 
     # Serve Frontend
     @app.route('/', defaults={'path': ''})
@@ -68,6 +70,26 @@ def create_app(config_class=Config):
     # Create Database Tables
     with app.app_context():
         db.create_all()
+        
+        # Seed test users
+        from models import User
+        
+        test_users = [
+            {"email": "admin@test.com", "password": "AdminPassword123", "role": "admin", "display_name": "Admin User"},
+            {"email": "user@test.com", "password": "UserPassword123", "role": "user", "display_name": "Standard User"}
+        ]
+        
+        for user_data in test_users:
+            if not User.query.filter_by(email=user_data["email"]).first():
+                user = User(
+                    email=user_data["email"],
+                    role=user_data["role"],
+                    display_name=user_data["display_name"]
+                )
+                user.set_password(user_data["password"])
+                db.session.add(user)
+        
+        db.session.commit()
 
     return app
 

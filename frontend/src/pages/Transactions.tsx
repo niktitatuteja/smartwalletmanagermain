@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import PaymentSandboxModal from "@/components/PaymentSandboxModal";
 
 const categories = ["Food", "Fuel", "Rent", "Shopping", "Salary", "Freelance", "Utilities", "Entertainment", "Travel", "Other"];
 
@@ -34,6 +35,10 @@ export default function Transactions() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   
+  // Sandbox State
+  const [showSandbox, setShowSandbox] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState<any>(null);
+
   // Filters
   const [filterType, setFilterType] = useState("All");
   const [filterCategory, setFilterCategory] = useState("All");
@@ -71,6 +76,21 @@ export default function Transactions() {
     setCardId(""); setEditing(null);
   };
 
+  const executeSubmit = async (payload: any) => {
+    try {
+      if (editing) {
+        await transactionService.update(editing.id, payload);
+        toast.success("Transaction updated");
+      } else {
+        await transactionService.create(payload);
+        toast.success("Transaction added");
+      }
+      resetForm(); setOpen(false); fetchData();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = { 
@@ -83,17 +103,19 @@ export default function Transactions() {
       card_id: paymentMethod === "Card" && cardId ? parseInt(cardId) : null
     };
 
-    try {
-      if (editing) {
-        await transactionService.update(editing.id, payload);
-        toast.success("Transaction updated");
-      } else {
-        await transactionService.create(payload);
-        toast.success("Transaction added");
-      }
-      resetForm(); setOpen(false); fetchData();
-    } catch (err: any) {
-      toast.error(err.message);
+    // Intercept Expense or Card Payment for sandbox
+    if (type === "Expense" || paymentMethod === "Card") {
+      setPendingPayload(payload);
+      setShowSandbox(true);
+    } else {
+      executeSubmit(payload);
+    }
+  };
+
+  const handleSandboxSuccess = () => {
+    if (pendingPayload) {
+      executeSubmit(pendingPayload);
+      setPendingPayload(null);
     }
   };
 
@@ -198,6 +220,14 @@ export default function Transactions() {
           </DialogContent>
         </Dialog>
       </div>
+
+      <PaymentSandboxModal 
+        isOpen={showSandbox} 
+        onClose={() => setShowSandbox(false)} 
+        onSuccess={handleSandboxSuccess} 
+        amount={pendingPayload?.amount || 0} 
+        title={pendingPayload?.category || "Transaction"}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
         <div className="md:col-span-6 relative">
