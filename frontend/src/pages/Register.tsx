@@ -48,7 +48,7 @@ export default function Register() {
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-3xl font-bold tracking-tight text-white">Create an Account</CardTitle>
             <CardDescription className="text-gray-400">
-              Join SmartWallet today. Already have an account?{" "}
+              Join FinTrack today. Already have an account?{" "}
               <Link to="/login" className="text-indigo-400 hover:underline">Login</Link>
             </CardDescription>
           </CardHeader>

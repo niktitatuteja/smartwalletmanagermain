@@ -71,7 +71,7 @@ def create_app(config_class=Config):
     def health_check():
         return jsonify({
             "status": "ok",
-            "message": "Smart Wallet API is running gracefully"
+            "message": "FinTrack API is running gracefully"
         }), 200
 
     # Test Email Endpoint

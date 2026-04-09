@@ -63,7 +63,7 @@ export default function Login() {
                 <ShieldCheck className="w-8 h-8 text-purple-400" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight text-white">SmartWallet</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight text-white">FinTrack</CardTitle>
             <CardDescription className="text-gray-400">
               {step === 1 ? "Secure access to your finances" : "Enter the verification code"}
             </CardDescription>
