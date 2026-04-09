@@ -46,6 +46,9 @@ export default function Register() {
       >
         <Card className="glass-card border-white/10 shadow-2xl bg-[#0f172a]/80 backdrop-blur-xl">
           <CardHeader className="text-center pb-2">
+            <div className="flex justify-center mb-4">
+               <img src="/logo-transparent.png" alt="FinTrack Logo" className="w-32 sm:w-40 h-auto object-contain drop-shadow-lg" />
+            </div>
             <CardTitle className="text-3xl font-bold tracking-tight text-white">Create an Account</CardTitle>
             <CardDescription className="text-gray-400">
               Join FinTrack today. Already have an account?{" "}
