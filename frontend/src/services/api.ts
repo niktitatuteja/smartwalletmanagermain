@@ -13,8 +13,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
+    // Ensure token is valid and not a string "undefined" or "null"
+    if (token && token !== 'undefined' && token !== 'null') {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      // Clean up bad localStorage state
+      localStorage.removeItem('token');
     }
     return config;
   },
@@ -27,12 +31,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // If the server returns 401 Unauthorized, the token is invalid or expired
+    // Check if we have a 401 and not already logging out
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // Only redirect if not already on login/register to avoid infinite loops
+      // Use location assign to force a clean reset to login page
       if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-        window.location.href = '/login';
+        window.location.assign('/login');
+        // Return a silent promise so components don't pop up toasts while redirecting
+        return new Promise(() => {}); 
       }
     }
     
