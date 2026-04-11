@@ -11,8 +11,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     balance = db.Column(db.Float, nullable=False, default=10000.00)
 
-    otp = db.Column(db.String(6), nullable=True)
-    otp_expiry = db.Column(db.DateTime, nullable=True)
 
     # Relationships
     cards = db.relationship('Card', backref='user', lazy=True, cascade="all, delete-orphan")

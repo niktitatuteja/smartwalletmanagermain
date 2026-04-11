@@ -74,15 +74,6 @@ def create_app(config_class=Config):
             "message": "FinTrack API is running gracefully"
         }), 200
 
-    # Test Email Endpoint
-    @app.route('/test-email')
-    def test_email():
-        from utils.email_service import send_otp_email
-        try:
-            send_otp_email("nikita23tuteja@gmail.com", "123456")
-            return jsonify({"success": True, "message": "Email sent"}), 200
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)}), 500
 
     # Create Database Tables & Seeding
     with app.app_context():

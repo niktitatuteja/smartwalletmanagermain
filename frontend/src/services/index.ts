@@ -11,7 +11,7 @@ export interface ApiResponse<T = any> {
 
 export const authService = {
   login: (data: any) => api.post<ApiResponse>('/auth/login', data) as unknown as Promise<ApiResponse>,
-  verifyOtp: (data: any) => api.post<ApiResponse>('/auth/verify-otp', data) as unknown as Promise<ApiResponse>,
+
   register: (data: any) => api.post<ApiResponse>('/auth/register', data) as unknown as Promise<ApiResponse>,
   getMe: () => api.get<ApiResponse>('/auth/me') as unknown as Promise<ApiResponse>,
 };
