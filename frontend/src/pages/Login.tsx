@@ -65,7 +65,7 @@ export default function Login() {
         <Card className="glass-card border-white/10 shadow-2xl bg-[#0f172a]/80 backdrop-blur-xl">
           <CardHeader className="text-center pb-2">
             <div className="flex justify-center mb-4 mt-2">
-               <img src="/logo.png" alt="FinTrack Logo" className="w-56 sm:w-64 h-auto object-contain scale-125 drop-shadow-lg" />
+               <img src="/logo.png" alt="FinTrack Logo" className="w-24 sm:w-32 h-auto object-contain drop-shadow-lg" />
             </div>
             <CardTitle className="text-3xl font-bold tracking-tight text-white">FinTrack</CardTitle>
             <CardDescription className="text-gray-400">
