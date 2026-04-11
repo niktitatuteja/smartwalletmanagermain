@@ -22,7 +22,7 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    access_token = create_access_token(identity=new_user.id)
+    access_token = create_access_token(identity=str(new_user.id))
     return jsonify(access_token=access_token, user=new_user.to_dict(), success=True), 201
 
 @auth_bp.route('/login', methods=['POST'])
@@ -34,7 +34,7 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and user.check_password(password):
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify(access_token=access_token, user=user.to_dict(), success=True)
     
     return jsonify({"error": "Invalid credentials"}), 401
