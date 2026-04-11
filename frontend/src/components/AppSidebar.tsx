@@ -24,7 +24,6 @@ const navItems = [
   { title: "Dues", url: "/dues", icon: CalendarClock },
   { title: "Budgets", url: "/budgets", icon: PieChart },
   { title: "Goals", url: "/goals", icon: Target },
-  { title: "Login", url: "/login", icon: LogOut },
 ];
 
 export function AppSidebar() {
