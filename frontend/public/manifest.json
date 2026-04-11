@@ -3,12 +3,12 @@
   "name": "FinTrack - Personal Finance Manager",
   "icons": [
     {
-      "src": "logo-transparent.png",
+      "src": "logo.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "logo-transparent.png",
+      "src": "logo.png",
       "type": "image/png",
       "sizes": "512x512"
     }
