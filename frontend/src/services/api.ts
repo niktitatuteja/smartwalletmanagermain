@@ -15,7 +15,12 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     // Ensure token is valid and not a string "undefined" or "null"
     if (token && token !== 'undefined' && token !== 'null') {
-      config.headers.Authorization = `Bearer ${token}`;
+      // aggressively clean token of any quotes, whitespace, or duplicated Bearer strings
+      let cleaned = token.replace(/['"]+/g, '').trim();
+      if (cleaned.toLowerCase().startsWith('bearer ')) {
+        cleaned = cleaned.substring(7).trim();
+      }
+      config.headers.Authorization = `Bearer ${cleaned}`;
     } else {
       // Clean up bad localStorage state
       localStorage.removeItem('token');
